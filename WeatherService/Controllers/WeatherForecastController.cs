@@ -19,13 +19,20 @@ namespace WeatherService.Controllers
         }
 
         [HttpGet(Name = "GetForecast")]
-        public WeatherForecast Get(int postal_code, string key)
+        public WeatherForecast Get(int postal_code)
         {
-            //Console.WriteLine(postal_code);
-            //Console.WriteLine(key);
-            WeatherForecast forecast = WeatherService.Implementations.WeatherForecastImplementation.GetWeatherForecast(postal_code, key).Result;
+            WeatherForecast forecast = WeatherService.Implementations.WeatherForecastImplementation.GetWeatherForecast(postal_code).Result;
 
             //todo: set Summary value on forecast response using Summaries data dictionary
+            try
+            { 
+                int summaryKey = Summaries.Keys.Where(key => key < forecast.Temperature["celcius"]).Max();
+                forecast.Summary = Summaries[summaryKey];
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
 
             return forecast;
         }
