@@ -23,7 +23,17 @@ namespace WeatherService.Implementations
                 string responseBody = await response.Content.ReadAsStringAsync();
                 //forecast = JsonConvert.DeserializeObject<WeatherForecast>(responseBody);
                 JObject json = JObject.Parse(responseBody);
-                double temp = (double)json["data"][0]["temp"];
+
+                double temp = 0;
+                if (json["data"][0]["temp"] != null)
+                {
+                    temp = (double)json["data"][0]["temp"];
+                }
+                else
+                {
+                    return forecast;
+                }
+
                 forecast = new WeatherForecast()
                 {
                     Date = (string)json["data"][0]["datetime"],
